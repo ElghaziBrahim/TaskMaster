@@ -3,29 +3,49 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
 model User {
-  id            String   @id @default(cuid())
+  id            Int      @id @default(autoincrement())
   name          String?
   email         String   @unique
   emailVerified DateTime?
   image         String?
   todos         Todo[]
-
-  @@map("users")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  accounts      Account[]
 }
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            Int
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
 model Todo {
   id          Int      @id @default(autoincrement())
   title       String
   description String
   completed   Boolean  @default(false)
-  userId      String   @map("user_id")
+  userId      Int
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  @@map("todos")
+  dueDate String 
 }
-

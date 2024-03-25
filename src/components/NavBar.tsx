@@ -1,7 +1,14 @@
 "use client"
 import { useState } from 'react';
 import { signIn } from 'next-auth/react'
-const Navbar = () => {
+import { signOut } from 'next-auth/react';
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+
+
+
+const Navbar = ({ currentUser }: any) => {
+    console.log(currentUser)
     const [showDropdown, setShowDropdown] = useState(false);
 
     const toggleDropdown = () => {
@@ -11,12 +18,17 @@ const Navbar = () => {
     const closeDropdown = () => {
         setShowDropdown(false);
     };
-
+    const router = useRouter()
     return (
         <nav className="flex justify-between items-center bg-white shadow-md p-4">
-            <div className="navbar-logo">
-                <img src="/logo.png" alt="Logo" className="h-10" />
-            </div>
+            <Image
+                onClick={() => router.push("/")}
+                className="navbar-logo"
+                alt="logo image"
+                width="50"
+                height="50"
+                src="/logo.png"
+            />
             <div className="navbar-search flex items-center">
                 <input
                     type="text"
@@ -27,7 +39,7 @@ const Navbar = () => {
             </div>
             <div className="navbar-profile relative">
                 <img
-                    src="/picture.png"
+                    src={`${currentUser ? currentUser.image : "/picture.png"}`}
                     alt="Profile"
                     className="h-10 rounded-full cursor-pointer"
                     onClick={() => toggleDropdown()}
@@ -35,7 +47,14 @@ const Navbar = () => {
                 {showDropdown && (
                     <div className="absolute top-full right-0 bg-white shadow-md rounded-md mt-1" onClick={() => closeDropdown()}>
                         <ul className="py-1">
-                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => signIn("github")}>Login</li>
+                            {
+                                currentUser ? (
+                                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer " onClick={() => signOut()}>Sign Out</li>
+                                ) : (
+                                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => signIn("github")}>Login</li>
+                                )
+                            }
+
                         </ul>
                     </div>
                 )}
