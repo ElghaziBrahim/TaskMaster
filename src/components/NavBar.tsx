@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation"
 
 
 const Navbar = ({ currentUser }: any) => {
-    console.log(currentUser)
     const [showDropdown, setShowDropdown] = useState(false);
 
     const toggleDropdown = () => {
