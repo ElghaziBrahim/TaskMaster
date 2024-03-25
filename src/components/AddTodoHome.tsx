@@ -1,15 +1,8 @@
 "use client"
+import { useRouter } from "next/navigation";
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-    DialogFooter
-} from "../components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "../components/ui/dialog"
 
 interface Task {
     title: string;
@@ -18,12 +11,9 @@ interface Task {
 }
 
 const AddTodoHome = () => {
+    const router = useRouter()
     const [showAddTask, setShowAddTask] = useState(false);
     const [newTask, setNewTask] = useState<Task>({ title: '', description: '', dueDate: '' });
-
-    const handleAddTaskClick = () => {
-        setShowAddTask(true);
-    };
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -38,27 +28,25 @@ const AddTodoHome = () => {
             console.log({ response })
             setShowAddTask(false);
             setNewTask({ title: '', description: '', dueDate: '' });
+            router.refresh();
         } catch (error) {
             console.error('Error saving task:', error);
         }
     };
 
     return (
-        <div className="container mx-auto px-4 relative">
+        <div className="container mx-auto px-4 py-8">
             <Dialog open={showAddTask} onOpenChange={setShowAddTask}>
                 <DialogTrigger>
-                    <button
-                        onClick={handleAddTaskClick}
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3"
-                    >
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Add New Task
                     </button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-md">
                     <DialogHeader>
-                        <DialogTitle>Add New Task</DialogTitle>
-                        <DialogDescription>
-                            add a new task to your day
+                        <DialogTitle className="text-2xl font-bold">Add New Task</DialogTitle>
+                        <DialogDescription className="text-gray-600 mb-4">
+                            Add a new task to your day
                         </DialogDescription>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4">
@@ -90,7 +78,7 @@ const AddTodoHome = () => {
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-full"
                                 />
                             </div>
-                            <DialogFooter>
+                            <DialogFooter className="flex justify-end">
                                 <button
                                     type="submit"
                                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
