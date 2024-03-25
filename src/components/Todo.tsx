@@ -8,6 +8,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import TodoModel from "./TodoModel";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import dayjs from 'dayjs';
@@ -45,9 +46,7 @@ const Todo = ({ todo, currentUser }: any) => {
                     Due Date: {dayjs(todo.dueDate).format('MMM D, YYYY')}
                 </CardDescription>
                 <div className="flex space-x-2">
-                    <button className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300">
-                        Edit
-                    </button>
+                    <TodoModel completed={todo.completed ? "completed" : "pending"} label="Edit" id={todo.id} title={todo.title} description={todo.description} dueDate={todo.dueDate} />
                     {todo.userId === currentUser?.id && (
                         <button
                             onClick={handleDelete}

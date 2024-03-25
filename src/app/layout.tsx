@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import getCurrentUser from '../libs/getCurrentUser';
 import "./globals.css";
+import { Toaster } from "../components/ui/toaster"
+
 
 import NavBar from "@/components/NavBar";
 
@@ -21,9 +23,10 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <NavBar currentUser={currentUser} />
         <main>
+          <NavBar currentUser={currentUser} />
           {children}
+          <Toaster />
         </main>
       </body>
     </html>
