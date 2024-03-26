@@ -1,26 +1,46 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { ReloadIcon } from "@radix-ui/react-icons"
+import { useToast } from "@/components/ui/use-toast"
+
 import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
 import TodoModel from "./TodoModel";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import axios from "axios";
 import dayjs from 'dayjs';
+import { SafeUser, /* SafeTodo */ } from "@/types"
+import { Todo } from "@prisma/client"
 
-const Todo = ({ todo, currentUser }: any) => {
+
+interface TodoProps {
+    currentUser: SafeUser | null;
+    todo: Todo
+}
+
+const Todo = ({ todo, currentUser }: TodoProps) => {
+    const { toast } = useToast()
+
     const router = useRouter();
+    const [disabledButton, setDisabledButton] = useState(false);
+
 
     const handleDelete = async (e: any) => {
         try {
+            setDisabledButton(true)
             e.preventDefault();
             await axios.delete(`/api/todo/${todo.id}`);
-            console.log('Todo deleted successfully!');
+            toast({
+                variant: "success",
+                description: "Todo deleted successfully.",
+            })
             router.refresh();
         } catch (error) {
             console.error('Error deleting todo:', error);
@@ -46,14 +66,20 @@ const Todo = ({ todo, currentUser }: any) => {
                     Due Date: {dayjs(todo.dueDate).format('MMM D, YYYY')}
                 </CardDescription>
                 <div className="flex space-x-2">
-                    <TodoModel completed={todo.completed ? "completed" : "pending"} label="Edit" id={todo.id} title={todo.title} description={todo.description} dueDate={todo.dueDate} />
                     {todo.userId === currentUser?.id && (
-                        <button
-                            onClick={handleDelete}
-                            className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors duration-300"
-                        >
-                            Delete
-                        </button>
+                        <>
+                            <TodoModel completed={todo.completed ? "completed" : "pending"} label="Edit" id={todo.id} title={todo.title} description={todo.description} dueDate={todo.dueDate} />
+
+                            <Button onClick={handleDelete} disabled={disabledButton}>
+                                {
+                                    disabledButton && (
+                                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                                    )
+                                }
+                                Delete
+                            </Button>
+                        </>
+
                     )}
                 </div>
             </CardContent>

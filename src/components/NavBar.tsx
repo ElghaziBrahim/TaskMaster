@@ -5,9 +5,12 @@ import { signOut } from 'next-auth/react';
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 
+import { SafeUser } from '@/types';
 
-
-const Navbar = ({ currentUser }: any) => {
+interface NavbarProps {
+    currentUser: SafeUser | null;
+}
+const Navbar = ({ currentUser }: NavbarProps) => {
     const [showDropdown, setShowDropdown] = useState(false);
 
     const toggleDropdown = () => {
@@ -28,14 +31,6 @@ const Navbar = ({ currentUser }: any) => {
                 height="50"
                 src="/logo.png"
             />
-            <div className="navbar-search flex items-center">
-                <input
-                    type="text"
-                    placeholder="Search..."
-                    className="bg-gray-200 rounded-md p-2 mr-2 focus:outline-none"
-                />
-                <button className="bg-blue-500 text-white px-4 py-2 rounded-md">Search</button>
-            </div>
             <div className="navbar-profile relative">
                 <img
                     src={`${currentUser ? currentUser.image : "/picture.png"}`}
